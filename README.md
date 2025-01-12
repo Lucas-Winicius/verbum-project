@@ -1,31 +1,31 @@
 # Verbum
 
-O "**Verbum**" é uma API de gerenciamento de bibliotecas que permite criar novas **Verbum** e gerenciar livros individualmente.
+**Verbum** is a library management API that allows users to create new libraries and manage books individually.
 
-Com o "Verbum", buscamos oferecer uma solução abrangente para o gerenciamento de bibliotecas de todos os portes. Nossa API permite adicionar livros com seus respectivos dados, criar bibliotecas com seus administradores e realizar buscas eficientes no acervo.
+With **Verbum**, we aim to provide a comprehensive solution for managing libraries of all sizes. Our API enables adding books with detailed information, creating libraries with administrators, and performing efficient searches within the collection.
 
-# Estrutura do projeto
+# Project Structure
 
-Primeiramente, quero esclarecer alguns padrões do projeto, incluindo elementos essenciais como banco de dados e rotas. É importante lembrar que estas são apenas recomendações – você está livre para desenvolver sua própria estrutura.
+First, let’s clarify some project standards, including essential elements like the database and routes. These are merely recommendations—you are free to design your own structure.
 
-### Tabela da Biblioteca
+### Library Table
 
-| **Nome da Coluna** | **Tipo** | **Observações** |
+| **Column Name** | **Type** | **Notes** |
 | --- | --- | --- |
 | id  | int | - |
-| public_id | string | Ter padrão de url (biblioteca-legal) |
-| private | boolean |  |
+| public_id | string | URL-like pattern (e.g., my-cool-library) |
+| private | boolean | - |
 | name | string | - |
 | about | string | - |
-| owner | User(id) | Referencia o dono |
+| owner | User(id) | References the owner |
 | location | string | - |
-| moderators | User[](id) | Referencia os ajudantes |
-| books | Books[](id) | Referencia vários livros |
+| moderators | User[](id) | References helpers |
+| books | Books[](id) | References multiple books |
 | created_at | Date | - |
 
-### Tabela do Usuário
+### User Table
 
-| **Nome da Coluna** | **Tipo** | **Observações** |
+| **Column Name** | **Type** | **Notes** |
 | --- | --- | --- |
 | id | int | - |
 | name | string | - |
@@ -36,9 +36,9 @@ Primeiramente, quero esclarecer alguns padrões do projeto, incluindo elementos 
 | libraries | Library[](id) | - |
 | created_at | Date | - |
 
-### Tabela de Livros
+### Book Table
 
-| **Nome da Coluna** | **Tipo** | **Observações** |
+| **Column Name** | **Type** | **Notes** |
 | --- | --- | --- |
 | id | string | - |
 | name | string | - |
@@ -46,135 +46,135 @@ Primeiramente, quero esclarecer alguns padrões do projeto, incluindo elementos 
 | author | string | - |
 | amount | string | - |
 | synopsis | string | - |
-| comments | Comments[] | Refencia o comentario |
-| library | Library(id) | Refencia a biblioteca |
+| comments | Comments[] | References comments |
+| library | Library(id) | References the library |
 | created_at | Date | - |
 
-### Tabela de Empréstimos
+### Lending Table
 
-| **Nome da Coluna** | **Tipo** | **Observações** |
+| **Column Name** | **Type** | **Notes** |
 | --- | --- | --- |
 | id | string | - |
-| book_id | Book(id) | Refencia o Livro |
+| book_id | Book(id) | References the book |
 | collected_at | Date | - |
 | returned | boolean | - |
-| returned_at | Date | null | - |
+| returned_at | Date | nullable | - |
 | user_name | string | - |
 | user_email | string | - |
 | user_tel | string | - |
 | notes | string | - |
 
-### Tabela de comentarios
+### Comments Table
 
-| **Nome da Coluna** | **Tipo** | **Observações** |
+| **Column Name** | **Type** | **Notes** |
 | --- | --- | --- |
 | id | string | - |
-| author_id | User(id) | Refencia ao usuário |
-| book_id | Book(id) | Referencia o livro |
+| author_id | User(id) | References the user |
+| book_id | Book(id) | References the book |
 | content | string | - |
-| rating | number | Nota do livro |
+| rating | number | Book rating |
 | created_at | Date | - |
 
-### Tabela de estatísticas da biblioteca
+### Library Statistics Table
 
-| **Nome da Coluna** | **Tipo** | **Observações** |
+| **Column Name** | **Type** | **Notes** |
 | --- | --- | --- |
 | id | string | - |
-| library_id | int | Referência à biblioteca |
-| month_year | string | Representação do mês e ano (MM-AAAA) |
-| books_added | int | Número de livros adicionados no mês/ano |
-| total_books | int | Total de livros no acervo após o mês/ano |
-| average_borrow_time | int[] | Tempo médio de empréstimo em horas |
-| total_borrows | int | Total de empréstimos realizados |
-| total_returns | int | Total de devoluções realizadas |
-| created_at | Date | Data do registro |
+| library_id | int | References the library |
+| month_year | string | Month and year representation (MM-YYYY) |
+| books_added | int | Number of books added during the month/year |
+| total_books | int | Total books in the collection after the month/year |
+| average_borrow_time | int[] | Average borrowing time in hours |
+| total_borrows | int | Total borrowings completed |
+| total_returns | int | Total returns completed |
+| created_at | Date | - |
 
-### Tabela de padrões de Busca
+### Search Patterns Table
 
-| **Nome da coluna** | **Tipo** | **Observações** |
+| **Column Name** | **Type** | **Notes** |
 | --- | --- | --- |
-| id | string | Identificador único do registro de busca |
-| search_term | string | Termo buscado |
-| user_id | id | Referência ao usuário que realizou a busca |
-| search_date | Date | Data da busca |
-| results_count | int | Número de resultados retornados |
-| your_results | int | Número de resultados retornados que apareciam você |
+| id | string | Unique search record identifier |
+| search_term | string | Search term |
+| user_id | id | References the user who performed the search |
+| search_date | Date | Search date |
+| results_count | int | Number of returned results |
+| your_results | int | Results featuring your entries |
 
-### Tabela de Eventos
+### Events Table
 
-| **Nome da Coluna** | **Tipo** | **Observações** |
+| **Column Name** | **Type** | **Notes** |
 | --- | --- | --- |
-| id | string | Identificador único do evento |
-| library_id | int | null | Referência à biblioteca (Library) |
-| title | string | Título do evento |
-| description | string | Descrição do evento |
-| event_date | Date | Data e horário do evento |
-| ends_at | Date | Data de encerramento |
-| organizer_id | int | Referência ao organizador (User) |
-| status | Planned Cancelled Postponed Completed | Status do evento (planejado, concluído, cancelado) |
-| link | string | null |  |
-| created_at | Date | Data de criação do evento |
+| id | string | Unique event identifier |
+| library_id | int | nullable | References the library |
+| title | string | Event title |
+| description | string | Event description |
+| event_date | Date | Event date and time |
+| ends_at | Date | End date |
+| organizer_id | int | References the organizer (User) |
+| status | Planned Cancelled Postponed Completed | Event status |
+| link | string | nullable | - |
+| created_at | Date | - |
 
-### Tabela de Notificações
+### Notifications Table
 
-| **Nome da Coluna** | **Tipo** | **Observações** |
+| **Column Name** | **Type** | **Notes** |
 | --- | --- | --- |
-| id | string | Identificador |
-| library_id | int | null | Referência à biblioteca (Library) |
+| id | string | Identifier |
+| library_id | int | nullable | References the library |
 | title | string | - |
 | content | string | - |
-| hide_at | Date | Quando a notificação desaparecerá |
+| hide_at | Date | Expiration date |
 | created_at | Date | - |
 
-Para um melhor funcionamento, é importante que todo usuário possa acessar qualquer biblioteca e, caso queira, possa criar a sua própria. Quanto às rotas, listarei abaixo sugestões de rotas e funcionalidades.
+For optimal functionality, every user should be able to access any library and, if desired, create their own. Below are suggested routes and functionalities.
 
-## Usuário
+## User
 
-- Criar Usuário - `PUT /user`
-- Ver um usuario - `GET /user/{nick}`
-- Editar Perfil - `PATCH /user/{nick}`
+- Create User - `PUT /user`
+- View a User - `GET /user/{nick}`
+- Edit Profile - `PATCH /user/{nick}`
 
-## Biblioteca
+## Library
 
-- Criar uma nova biblioteca - `PUT /library`
-- Ver uma unica biblioteca - `GET /library/{library_id}`
-- Editar a biblioteca - `PATCH /library/{library_id}`
-- Adicionar moderadores - `PUT /library/{library_id}/moderator`
-- Remover moderador - `DELETE /library/{library_id}/moderator`
-- Ver moderadores - `GET /library/{library_id}/moderator`
-- Adicionar livros - `PUT /library/{library_id}/book`
-- Remover livros - `DELETE /library/{library_id}/book`
-- Ver livros - `GET /library/{library_id}/book`
-- Ver um unico livro - `GET /book/{book_id}`
-- Buscar bibliotecas - `GET /library?q=`
-- Emprestar livros - `PUT /library/{library_id}/lending`
-- Devolver livros - `DELETE /library/{library_id}/lending`
-- Ver todos os emprestimos `GET /library/{library_id}/lending`
-- Criar um comentario - `PUT /library/{library_id}/comment`
-- Deletar um comentario - `DELETE /library/{library_id}/comment`
-- Criar uma notificação - `PUT /library/{library_id}/notification`
-- Editar uma notificação - `PATCH /library/{library_id}/notification`
+- Create a new library - `PUT /library`
+- View a single library - `GET /library/{library_id}`
+- Edit library - `PATCH /library/{library_id}`
+- Add moderators - `PUT /library/{library_id}/moderator`
+- Remove moderator - `DELETE /library/{library_id}/moderator`
+- View moderators - `GET /library/{library_id}/moderator`
+- Add books - `PUT /library/{library_id}/book`
+- Remove books - `DELETE /library/{library_id}/book`
+- View books - `GET /library/{library_id}/book`
+- View a single book - `GET /book/{book_id}`
+- Search libraries - `GET /library?q=`
+- Borrow books - `PUT /library/{library_id}/lending`
+- Return books - `DELETE /library/{library_id}/lending`
+- View all borrowings - `GET /library/{library_id}/lending`
+- Create a comment - `PUT /library/{library_id}/comment`
+- Delete a comment - `DELETE /library/{library_id}/comment`
+- Create a notification - `PUT /library/{library_id}/notification`
+- Edit a notification - `PATCH /library/{library_id}/notification`
 
-## Eventos
+## Events
 
-- Criar um novo evento - `PUT /events`
-- Ver um uníco evento - `GET /events/{event_id}`
-- Editar um evento existente - `PATCH /events/{event_id}`
-- Cancelar um evento - `DELETE /events/{event_id}`
+- Create a new event - `PUT /events`
+- View a single event - `GET /events/{event_id}`
+- Edit an event - `PATCH /events/{event_id}`
+- Cancel an event - `DELETE /events/{event_id}`
 
-# Desing
+# Design
 
-Caso deseje, também temos um template de frontend, o qual esta salvo no figma.
+If you’d like, we also have a frontend template saved in Figma.
 
 - [Figma](https://www.figma.com/design/xwYF27qE2els9kG9M4yPGu/Verbum?node-id=0-1&t=P73fi4PmTxu0OA1b-1)
 
-# Considerações Finais
+# Final Considerations
 
-Caso tenha chegado até aqui, agradeço e espero que tenha gostado. Além disso, convido você a criar sua própria versão do projeto, seja seguindo minhas diretrizes ou de uma forma mais livre. Se quiser ver a minha versão, basta acessar os links abaixo. Caso deseje me mostrar a sua versão, envie-a através de uma das minhas redes sociais listadas abaixo. Não se esqueça de me seguir lá também!
+Thank you for reading this far! I hope you enjoyed it. I encourage you to create your version of the project, whether following my guidelines or using a more creative approach. To view my version, check the links below. Feel free to share your version with me via my social media links below, and don’t forget to follow me!
 
-## Me siga nas redes!
+## Follow me on Social Media!
 
 - [GitHub/@Lucas-Winicius](https://github.com/Lucas-Winicius/)
-- [Linkedin/Lucas-Winicius-Souza](https://www.linkedin.com/in/lucas-winicius-souza/)
+- [LinkedIn/Lucas-Winicius-Souza](https://www.linkedin.com/in/lucas-winicius-souza/)
 - [Instagram/@Luk.Winicius](https://www.instagram.com/luc.winicius/)
 - [Notion Project Page](https://mountain-parka-6b1.notion.site/Verbum-11018dcd61ef807d84f8f34011570300)
